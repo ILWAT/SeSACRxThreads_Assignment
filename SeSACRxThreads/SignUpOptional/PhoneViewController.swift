@@ -54,7 +54,7 @@ class PhoneViewController: UIViewController {
             .disposed(by: disposeBag)
         
         phone
-            .map{ $0.count > 12678 }
+            .map{ $0.count > 12 }
             .subscribe(with: self) { owner, boolValue in
                 let color = boolValue ? UIColor.blue : UIColor.red
                 owner.buttonColor.onNext(color)

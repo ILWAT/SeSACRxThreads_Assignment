@@ -7,6 +7,8 @@
  
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 class BirthdayViewController: UIViewController {
     
@@ -63,8 +65,12 @@ class BirthdayViewController: UIViewController {
         }
         return label
     }()
-  
+    
     let nextButton = PointButton(title: "가입하기")
+    
+    let viewModel = BirthdayViewModel()
+    
+    let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,6 +80,39 @@ class BirthdayViewController: UIViewController {
         configureLayout()
         
         nextButton.addTarget(self, action: #selector(nextButtonClicked), for: .touchUpInside)
+        
+        bind()
+    }
+    
+    private func bind() {
+        birthDayPicker
+            .rx.date
+            .bind(to: viewModel.birthday)
+            .disposed(by: disposeBag)
+        
+        
+        viewModel.year
+            .map{ "\($0)년" }
+            .bind(to: yearLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.month
+            .map{ "\($0)월" }
+            .bind(to: monthLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.day
+            .map{ "\($0)일" }
+            .bind(to: dayLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.isEnable
+            .bind(to: nextButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        viewModel.buttonColor
+            .bind(to: nextButton.rx.backgroundColor)
+            .disposed(by: disposeBag)
     }
     
     @objc func nextButtonClicked() {
